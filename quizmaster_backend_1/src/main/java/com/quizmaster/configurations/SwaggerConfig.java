@@ -29,12 +29,10 @@ public class SwaggerConfig {
 
         Info info=new Info();
 
-        info.setTitle("Loan App");
-        info.setDescription("Loan application api");
+        info.setTitle("QuizMaster App");
+        info.setDescription("QuizMaster application api");
 
         info.setContact(new Contact().name("Sonia"));
-
-
 
 
         return new OpenAPI().info(info).servers(Arrays.asList(new Server[]{localserver}));
