@@ -23,7 +23,7 @@ import javax.servlet.Filter;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     public static String secretKey="SoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSoniaSonia";
 
