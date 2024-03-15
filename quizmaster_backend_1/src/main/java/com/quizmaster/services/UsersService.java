@@ -106,6 +106,34 @@ public class UsersService {
         }
     }
 
+    public ResponseEntity<String> updateUser(UpdateUserRequestModel updateUserRequestModel) {
+        User myUser=currentUser();
+        if(myUser==null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+
+        myUser.setFirstName(updateUserRequestModel.getFirstName());
+        myUser.setLastName(updateUserRequestModel.getLastName());
+
+        usersRepository.save(myUser);
+
+        return ResponseEntity.ok("Updated Successfully");
+    }
+
+    public ResponseEntity<String> changePassword(ChangePasswordRequestModel changePasswordRequestModel) {
+        User myUser=currentUser();
+        if(myUser==null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+
+        if(!changePasswordRequestModel.getPassword().equals(changePasswordRequestModel.getConfirmPassword()))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passwords Dont Match");
+
+        myUser.setPassword(passwordEncoder.encode(changePasswordRequestModel.getPassword()));
+
+        usersRepository.save(myUser);
+
+        return ResponseEntity.ok("Password Changed Successfully");
+    }
+
 
 
 }

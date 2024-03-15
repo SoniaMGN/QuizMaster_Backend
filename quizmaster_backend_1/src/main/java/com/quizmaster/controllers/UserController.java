@@ -67,4 +67,91 @@ public class UserController {
             return usersService.registerUser(registerRequestModel);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseModel> login(@RequestBody @Valid LoginRequestModel loginRequestModel)
+    {
+        //spring security handles login for us
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequestModel.getEmail(),loginRequestModel.getPassword())
+        );
+
+        UserDetails userDetails = registeredUserDetailService.loadUserByUsername(loginRequestModel.getEmail());
+
+        final String tokens = Jwts.builder().setClaims(new HashMap<>()).setSubject(userDetails.getUsername()).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(2)))
+                .signWith(SignatureAlgorithm.HS256, WebSecurityConfig.secretKey).compact();
+
+
+        String authorization="Bearer "+tokens;
+
+        AuthorizationTokens authorizationTokens=AuthorizationTokens.builder()
+                .created(new java.util.Date())
+                .hasLoggedOut(false)
+                .value(authorization)
+                .build();
+
+        authorizationTokensRepository.saveAndFlush(authorizationTokens);
+
+        //sendVerificationCode(authorizationTokens,userDetails.getUsername());
+
+        LoginResponseModel loginResponseModel=LoginResponseModel.builder()
+                .user(userDetails.getUsername())
+                .message("Login Successful.")
+                .Authorization(authorization)
+                .build();
+
+        return ResponseEntity.ok(loginResponseModel);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<String> logOut(HttpServletRequest request)
+    {
+        Optional<AuthorizationTokens> optionalAuthorizationTokens=authorizationTokensRepository.findByValue(request.getHeader("Authorization"));
+        if(optionalAuthorizationTokens.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Authoriation Not Found");
+
+        AuthorizationTokens authorizationTokens=optionalAuthorizationTokens.get();
+        if(authorizationTokens.getHasLoggedOut())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authoriation already Logged Out");
+
+        //perform the logout action
+        authorizationTokens.setHasLoggedOut(true);
+        authorizationTokens.setLogoutTime(new java.util.Date());
+
+        authorizationTokensRepository.save(authorizationTokens);
+
+        return ResponseEntity.ok("Logged out successfully");
+
+    }
+
+    @PostMapping("/updateUser")
+    public ResponseEntity<String> updateUser(@RequestBody @Valid UpdateUserRequestModel updateUserRequestModel,BindingResult result)
+    {
+        if(result.hasErrors())
+        {
+
+            String msg= MyUtils.createErrorMessage(result);
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+
+        }
+        else
+            return usersService.updateUser(updateUserRequestModel);
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@RequestBody @Valid ChangePasswordRequestModel changePasswordRequestModel,BindingResult result)
+    {
+        if(result.hasErrors())
+        {
+
+            String msg= MyUtils.createErrorMessage(result);
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+
+        }
+        else
+            return usersService.changePassword(changePasswordRequestModel);
+    }
+
 }

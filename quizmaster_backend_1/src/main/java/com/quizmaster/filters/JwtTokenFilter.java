@@ -59,8 +59,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 if (authorizationTokens.getHasLoggedOut())
                     hasFailed = true;
 
-                if(!hasFailed&&!authorizationTokens.isVerified())
-                    hasFailed=true;
+                //if(!hasFailed&&!authorizationTokens.isVerified())
+                    //hasFailed=true;
             }
 
 
