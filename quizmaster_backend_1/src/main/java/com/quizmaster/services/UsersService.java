@@ -93,7 +93,7 @@ public class UsersService {
 
     }
 
-    private User currentUser()
+    public User currentUser()
     {
         String email= SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<User> optionalUser=usersRepository.findByEmail(email);

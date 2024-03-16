@@ -15,10 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -152,6 +150,21 @@ public class UserController {
         }
         else
             return usersService.changePassword(changePasswordRequestModel);
+    }
+
+    @GetMapping("/getCurrentUser")
+    public ResponseEntity<GetUserResponseModel> getUser(){
+        GetUserResponseModel getUserResponseModel = new GetUserResponseModel();
+        User currentUser = usersService.currentUser();
+        if (currentUser != null){
+            getUserResponseModel.setFirstName(currentUser.getFirstName());
+            getUserResponseModel.setLastName(currentUser.getLastName());
+            return ResponseEntity.ok(getUserResponseModel);
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
 }
