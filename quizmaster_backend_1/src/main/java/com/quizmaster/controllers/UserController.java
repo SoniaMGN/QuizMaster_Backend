@@ -3,6 +3,7 @@ package com.quizmaster.controllers;
 import com.quizmaster.Auth.RegisteredUserDetailService;
 import com.quizmaster.configurations.WebSecurityConfig;
 import com.quizmaster.entities.AuthorizationTokens;
+import com.quizmaster.entities.Summary;
 import com.quizmaster.entities.User;
 import com.quizmaster.models.*;
 import com.quizmaster.utils.MyUtils;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -165,6 +167,28 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
 
+    }
+    @PostMapping("/saveSummary")
+    public ResponseEntity<SummaryResponseModel> saveSummary(@RequestBody @Valid SummaryRequestModel summaryRequestModel, BindingResult result)
+    {
+        if(result.hasErrors())
+        {
+
+            String msg= MyUtils.createErrorMessage(result);
+
+
+
+            SummaryResponseModel summaryResponseModel=SummaryResponseModel.builder()
+                    .summaryId(null)
+                    .message(msg)
+
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(summaryResponseModel);
+
+        }
+        else
+            return usersService.saveSummary(summaryRequestModel);
     }
 
 }

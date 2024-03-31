@@ -2,9 +2,11 @@ package com.quizmaster.services;
 
 
 import com.quizmaster.entities.AuthorizationTokens;
+import com.quizmaster.entities.Summary;
 import com.quizmaster.entities.User;
 import com.quizmaster.models.*;
 import com.quizmaster.repositories.AuthorizationTokensRepository;
+import com.quizmaster.repositories.SummariesRepository;
 import com.quizmaster.repositories.UsersRepository;
 import com.quizmaster.utils.MyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -27,6 +30,9 @@ import java.util.Optional;
 public class UsersService {
     @Autowired
     private UsersRepository usersRepository;
+
+    @Autowired
+    private SummariesRepository summariesRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -49,6 +55,7 @@ public class UsersService {
     public List<User> listUsers() {
         return usersRepository.findAll();
     }
+
 
     public ResponseEntity<RegisterResponseModel> registerUser(RegisterRequestModel registerRequestModel) {
 
@@ -134,6 +141,32 @@ public class UsersService {
         return ResponseEntity.ok("Password Changed Successfully");
     }
 
+    public ResponseEntity<SummaryResponseModel> saveSummary(SummaryRequestModel summaryRequestModel) {
+        User myUser = currentUser();
+        if (myUser == null)
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        else
+        {
+            Summary newSummary = Summary.builder()
+                    .date(summaryRequestModel.getDate())
+                    .title(summaryRequestModel.getTitle())
+                    .summary(summaryRequestModel.getSummary())
+                    .user(myUser)
+                    .build();
+
+            summariesRepository.addSummary(newSummary);
+
+            SummaryResponseModel response = SummaryResponseModel.builder()
+                    .summaryId(newSummary.getKey())
+                    .message("Summary was saved successfully")
+                    .build();
+
+            return ResponseEntity.ok(response);
+        }
 
 
+    }
 }
+
