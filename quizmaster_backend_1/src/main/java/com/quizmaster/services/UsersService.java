@@ -156,7 +156,7 @@ public class UsersService {
                     .user(myUser)
                     .build();
 
-            summariesRepository.addSummary(newSummary);
+            summariesRepository.save(newSummary);
 
             SummaryResponseModel response = SummaryResponseModel.builder()
                     .summaryId(newSummary.getKey())
@@ -167,6 +167,13 @@ public class UsersService {
         }
 
 
+    }
+
+    public ResponseEntity<List<Summary>> listSummaries()
+    {
+        User myUser = currentUser();
+
+        return ResponseEntity.ok(summariesRepository.findByUserID(currentUser().getKey()));
     }
 }
 

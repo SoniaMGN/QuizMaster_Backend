@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import javax.persistence.Entity;
 
 import java.util.Date;
 import javax.persistence.*;
@@ -24,7 +25,7 @@ public class Summary {
 
     private String title;
 
-    @JsonIgnore
+    @Column (columnDefinition = "text")
     private String summary;
 
     @ManyToOne

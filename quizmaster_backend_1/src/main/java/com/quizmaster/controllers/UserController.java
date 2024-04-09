@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.sql.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -155,16 +155,14 @@ public class UserController {
     }
 
     @GetMapping("/getCurrentUser")
-    public ResponseEntity<GetUserResponseModel> getUser(){
-        GetUserResponseModel getUserResponseModel = new GetUserResponseModel();
+    public ResponseEntity<User> getUser(){
         User currentUser = usersService.currentUser();
-        if (currentUser != null){
-            getUserResponseModel.setFirstName(currentUser.getFirstName());
-            getUserResponseModel.setLastName(currentUser.getLastName());
-            return ResponseEntity.ok(getUserResponseModel);
+        if (currentUser == null){
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
         else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(currentUser);
         }
 
     }
@@ -191,4 +189,9 @@ public class UserController {
             return usersService.saveSummary(summaryRequestModel);
     }
 
+    @GetMapping("/mySummaries")
+    public ResponseEntity<List<Summary>> mySummaries(){ return usersService.listSummaries(); }
+
 }
+
+
