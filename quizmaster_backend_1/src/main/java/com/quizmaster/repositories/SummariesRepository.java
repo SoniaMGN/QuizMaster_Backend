@@ -15,7 +15,7 @@ import java.util.List;
 public interface SummariesRepository extends JpaRepository<Summary, Long> {
 
 
-    @Query(value = "select a.key,a.title,a.date,a.summary from summaries a where a.user_key=?1",nativeQuery = true)
+    @Query(value = "select a from summaries a where a.user.key=?1")
     List<Summary> findByUserID(Long userKey);
 }
 

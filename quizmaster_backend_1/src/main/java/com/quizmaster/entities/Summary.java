@@ -28,6 +28,10 @@ public class Summary {
     @Column (columnDefinition = "text")
     private String summary;
 
+    @Column (columnDefinition = "text")
+    private String content;
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_key")
     private User user;

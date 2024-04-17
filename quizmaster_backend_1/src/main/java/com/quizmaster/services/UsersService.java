@@ -141,39 +141,5 @@ public class UsersService {
         return ResponseEntity.ok("Password Changed Successfully");
     }
 
-    public ResponseEntity<SummaryResponseModel> saveSummary(SummaryRequestModel summaryRequestModel) {
-        User myUser = currentUser();
-        if (myUser == null)
-        {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-        else
-        {
-            Summary newSummary = Summary.builder()
-                    .date(summaryRequestModel.getDate())
-                    .title(summaryRequestModel.getTitle())
-                    .summary(summaryRequestModel.getSummary())
-                    .user(myUser)
-                    .build();
-
-            summariesRepository.save(newSummary);
-
-            SummaryResponseModel response = SummaryResponseModel.builder()
-                    .summaryId(newSummary.getKey())
-                    .message("Summary was saved successfully")
-                    .build();
-
-            return ResponseEntity.ok(response);
-        }
-
-
-    }
-
-    public ResponseEntity<List<Summary>> listSummaries()
-    {
-        User myUser = currentUser();
-
-        return ResponseEntity.ok(summariesRepository.findByUserID(currentUser().getKey()));
-    }
 }
 

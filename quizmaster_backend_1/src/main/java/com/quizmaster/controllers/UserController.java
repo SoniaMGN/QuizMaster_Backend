@@ -166,31 +166,6 @@ public class UserController {
         }
 
     }
-    @PostMapping("/saveSummary")
-    public ResponseEntity<SummaryResponseModel> saveSummary(@RequestBody @Valid SummaryRequestModel summaryRequestModel, BindingResult result)
-    {
-        if(result.hasErrors())
-        {
-
-            String msg= MyUtils.createErrorMessage(result);
-
-
-
-            SummaryResponseModel summaryResponseModel=SummaryResponseModel.builder()
-                    .summaryId(null)
-                    .message(msg)
-
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(summaryResponseModel);
-
-        }
-        else
-            return usersService.saveSummary(summaryRequestModel);
-    }
-
-    @GetMapping("/mySummaries")
-    public ResponseEntity<List<Summary>> mySummaries(){ return usersService.listSummaries(); }
 
 }
 

@@ -20,4 +20,7 @@ public class SummaryRequestModel {
 
     @NotEmpty(message = "Summary cannot be empty")
     private String summary;
+
+    @NotEmpty(message = "Content cannot be empty")
+    private String content;
 }
