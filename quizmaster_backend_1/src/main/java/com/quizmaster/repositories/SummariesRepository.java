@@ -17,5 +17,8 @@ public interface SummariesRepository extends JpaRepository<Summary, Long> {
 
     @Query(value = "select a from summaries a where a.user.key=?1")
     List<Summary> findByUserID(Long userKey);
+
+    @Query(value = "SELECT a FROM summaries a WHERE a.user.key = ?1 AND a.title = ?2")
+    Summary findByTitleAndUserKey(Long userKey, String title);
 }
 

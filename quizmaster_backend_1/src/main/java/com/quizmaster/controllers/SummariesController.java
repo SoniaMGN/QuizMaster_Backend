@@ -71,6 +71,11 @@ public class SummariesController {
     @GetMapping("/mySummaries")
     public ResponseEntity<List<Summary>> mySummaries(){ return summariesService.listSummaries(); }
 
+    @GetMapping("/myContent")
+    public ResponseEntity<String> myContent(@RequestParam("title") String title){
+        return summariesService.getNotes(title);
+    }
+
     @DeleteMapping("/deleteSummary/{summaryKey}")
     public ResponseEntity<String> deleteSummary(@PathVariable("summaryKey") Long summaryKey) {
         User myUser = usersService.currentUser();

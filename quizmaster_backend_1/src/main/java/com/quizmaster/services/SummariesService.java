@@ -1,30 +1,15 @@
 package com.quizmaster.services;
 
-import com.quizmaster.entities.AuthorizationTokens;
 import com.quizmaster.entities.Summary;
 import com.quizmaster.entities.User;
 import com.quizmaster.models.*;
-import com.quizmaster.repositories.AuthorizationTokensRepository;
 import com.quizmaster.repositories.SummariesRepository;
-import com.quizmaster.repositories.UsersRepository;
-import com.quizmaster.utils.MyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateRequestCustomizer;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.dao.DataIntegrityViolationException;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+
 
 @Service
 public class SummariesService {
@@ -34,6 +19,8 @@ public class SummariesService {
 
     @Autowired
     private UsersService userService;
+
+
     public ResponseEntity<SummaryResponseModel> saveSummary(SummaryRequestModel summaryRequestModel) {
         User myUser = userService.currentUser();
         if (myUser == null)
@@ -46,6 +33,7 @@ public class SummariesService {
                     .date(summaryRequestModel.getDate())
                     .title(summaryRequestModel.getTitle())
                     .summary(summaryRequestModel.getSummary())
+                    .content(summaryRequestModel.getContent())
                     .user(myUser)
                     .build();
 
@@ -59,7 +47,6 @@ public class SummariesService {
             return ResponseEntity.ok(response);
         }
 
-
     }
 
     public ResponseEntity<List<Summary>> listSummaries()
@@ -67,5 +54,24 @@ public class SummariesService {
         User myUser = userService.currentUser();
 
         return ResponseEntity.ok(myUser.getSummaries());//summariesRepository.findByUserID(currentUser().getKey()));
+    }
+
+    public ResponseEntity<String> getNotes(String title)
+    {
+        User myUser = userService.currentUser();
+
+        if (myUser == null)
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        else {
+
+            Summary summary = summariesRepository.findByTitleAndUserKey(myUser.getKey(), title);
+
+            return ResponseEntity.ok(summary.getContent());
+        }
+
+
+        //return ResponseEntity.ok(myUser.getSummaries());//summariesRepository.findByUserID(currentUser().getKey()));
     }
 }
