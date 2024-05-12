@@ -2,6 +2,7 @@ package com.quizmaster.controllers;
 
 import com.quizmaster.entities.Quiz;
 import com.quizmaster.entities.Question;
+import com.quizmaster.entities.Summary;
 import com.quizmaster.entities.User;
 import com.quizmaster.models.*;
 import com.quizmaster.repositories.QuizRepository;
@@ -25,28 +26,6 @@ public class QuizController {
 
     @Autowired
     private QuizRepository quizRepository;
-
-/*    private List<Question> mapToQuestionEntities(@NotEmpty(message = "Question list cannot be empty") List<Question> questionRequestModels) {
-        List<Question> questions = new ArrayList<>();
-        for (Question questionRequestModel : questionRequestModels) {
-            Question question = mapToQuestionEntity(questionRequestModel);
-            questions.add(question);
-        }
-        return questions;
-    }
-
-
-    private Question mapToQuestionEntity(Question questionRequestModel) {
-        Question question = new Question();
-        question.setQuestion(questionRequestModel.getQuestion());
-        question.setAnswer(questionRequestModel.getAnswer());
-        question.setOption_1(questionRequestModel.getOption_1());
-        question.setOption_2(questionRequestModel.getOption_2());
-        question.setOption_3(questionRequestModel.getOption_3());
-        question.setOption_4(questionRequestModel.getOption_4());
-        question.setQuiz(questionRequestModel.getQuiz());
-        return question;
-    }*/
 
     @PostMapping("/saveQuiz")
     public ResponseEntity<?> saveQuiz(@RequestBody @Valid QuizRequestModel quizRequestModel) {
@@ -78,6 +57,36 @@ public class QuizController {
             return ResponseEntity.ok(response);
         }
     }
+
+    @GetMapping("/myQuizzes")
+    public ResponseEntity<List<Quiz>> myQuizzes() {
+        User myUser = usersService.currentUser();
+
+        return ResponseEntity.ok(myUser.getQuizzes());
+    }
+
+    @GetMapping("/myQuiz")
+    public ResponseEntity<QuizResponseModel> getQuiz(@RequestParam("title") String title) {
+        User myUser = usersService.currentUser();
+        if (myUser == null)
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        else {
+
+            Quiz quiz = quizRepository.findByTitleAndUserKey(myUser.getKey(), title);
+
+            QuizResponseModel response = QuizResponseModel.builder()
+                    .quizId(quiz.getKey())
+                    .questions(quiz.getQuestions())
+                    .message("Successfully retrieved quiz")
+                    .build();
+           return ResponseEntity.ok(response);
+        }
+
+    }
+
+
 
 }
 
