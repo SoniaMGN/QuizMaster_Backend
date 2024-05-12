@@ -27,6 +27,7 @@ public class Quiz {
     private String title;
 
 
+
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
     private List<Question> questions;
 
