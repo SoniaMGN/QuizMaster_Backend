@@ -45,8 +45,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String username = null;
         String bearerToken = request.getHeader("Authorization");
 
-
-
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
 
             Boolean hasFailed=false;
@@ -59,15 +57,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 if (authorizationTokens.getHasLoggedOut())
                     hasFailed = true;
 
-                //if(!hasFailed&&!authorizationTokens.isVerified())
-                    //hasFailed=true;
             }
-
-
-
-
             jwtToken = bearerToken.substring(7, bearerToken.length());
-//            jwtToken=bearerToken.replaceAll("Bearer ","");
+
 
             Jws<Claims> claims=Jwts.parser().setSigningKey(WebSecurityConfig.secretKey).build().parseClaimsJws(jwtToken);
             username=claims.getBody().getSubject();
