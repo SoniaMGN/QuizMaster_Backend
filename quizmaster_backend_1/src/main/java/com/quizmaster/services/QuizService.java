@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -41,29 +42,10 @@ public class QuizService {
 
         return questions;
     }
-    /*
-    *//*public ResponseEntity<QuizResponseModel> saveQuiz(QuizRequestModel quizRequestModel) {
-        User myUser = userService.currentUser();
-        if (myUser == null)
-        {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-        else
-        {
-           List<Question>  newList = createQuestions(quizRequestModel.Json);
 
 
-            summariesRepository.save(newSummary);
-
-            SummaryResponseModel response = SummaryResponseModel.builder()
-                    .summaryId(newSummary.getKey())
-                    .message("Summary was saved successfully")
-                    .build();
-
-            return ResponseEntity.ok(response);
-        }*//*
-
-    }*/
-
-
+    public Quiz getQuiz(Long id) {
+        return quizRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Quiz not found with id " + id));
+    }
 }
