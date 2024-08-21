@@ -19,6 +19,9 @@ public class RegisterRequestModel {
     @NotEmpty(message = "lastname cannot be empty")
     private String lastName;
 
+    @NotEmpty(message = "role cannot be empty")
+    private String role;
+
     @NotEmpty(message = "password cannot be empty")
     @Size(min = 6,message = "password must contain at least 6 characters long")
     private String password;
