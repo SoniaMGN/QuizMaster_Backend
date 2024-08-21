@@ -2,13 +2,15 @@ package com.quizmaster.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+
 import javax.persistence.*;
 import java.util.List;
+
+
 
 @Data
 @Builder
 @Entity(name = "users")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -16,6 +18,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long key;
+
 
     private String email;
 
@@ -34,9 +37,5 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Quiz> quizzes;
 
-    private String role;
 
-    private String school;
-
-    private String status;
 }

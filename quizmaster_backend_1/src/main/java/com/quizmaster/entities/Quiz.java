@@ -36,7 +36,4 @@ public class Quiz {
     @JoinColumn(name = "user_key")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "course_id")
-    private Course course;
 }

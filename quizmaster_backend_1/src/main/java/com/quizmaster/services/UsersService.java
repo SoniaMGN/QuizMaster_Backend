@@ -74,7 +74,6 @@ public class UsersService {
                 .email(registerRequestModel.getEmail()).
                 firstName(registerRequestModel.getFirstName())
                 .lastName(registerRequestModel.getLastName())
-                .role(registerRequestModel.getRole())
                 .password(passwordEncoder.encode(registerRequestModel.getPassword()))
                 .build();
 
@@ -143,3 +142,4 @@ public class UsersService {
     }
 
 }
+

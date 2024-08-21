@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class SwaggerConfig {
 
 
-    @Value("${http://127.0.0.1:8081}")
+    @Value("${http://127.0.0.1:8080}")
     private String localServer;
 
 
