@@ -1,5 +1,7 @@
 package com.quizmaster.controllers;
 
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import com.quizmaster.Auth.RegisteredUserDetailService;
 import com.quizmaster.configurations.WebSecurityConfig;
 import com.quizmaster.entities.AuthorizationTokens;
@@ -12,8 +14,11 @@ import com.quizmaster.services.UsersService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,6 +36,12 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
+
+    @Autowired
+    private JavaMailSender emailSender;
+
+    @Value("${spring.mail.username}")
+    private String fromEmail;
 
     @Autowired
     private UsersService usersService;
@@ -65,6 +76,52 @@ public class UserController {
         }
         else
             return usersService.registerUser(registerRequestModel);
+    }
+
+    @PostMapping("/register-teacher")
+    public ResponseEntity<RegisterResponseModel> registerTeacher(@RequestBody @Valid TeacherRegisterRequestModel registerRequestModel, BindingResult result)
+    {
+        if(result.hasErrors())
+        {
+
+            String msg= MyUtils.createErrorMessage(result);
+
+
+
+            RegisterResponseModel registerResponseModel=RegisterResponseModel.builder()
+                    .userId(null)
+                    .message(msg)
+
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(registerResponseModel);
+
+        }
+        else
+            return usersService.registerTeacher(registerRequestModel);
+    }
+
+    @PostMapping("/register-student")
+    public ResponseEntity<RegisterResponseModel> registerStudent(@RequestBody @Valid RegisterStudentRequestModel registerRequestModel, BindingResult result)
+    {
+        if(result.hasErrors())
+        {
+
+            String msg= MyUtils.createErrorMessage(result);
+
+
+
+            RegisterResponseModel registerResponseModel=RegisterResponseModel.builder()
+                    .userId(null)
+                    .message(msg)
+
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(registerResponseModel);
+
+        }
+        else
+            return usersService.registerStudent(registerRequestModel);
     }
 
     @PostMapping("/login")
@@ -166,7 +223,19 @@ public class UserController {
         }
 
     }
+    @GetMapping ("/test-email")
+    public String sendTestEmail() {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo("soniamangane@gmail.com");
+            message.setSubject("Test Email");
+            message.setText("This is a test email from Spring Boot application.");
+            message.setFrom(fromEmail);
+            emailSender.send(message);
+            return "Email sent successfully!";
+        } catch (Exception e) {
+            return "Failed to send email: " + e.getMessage();
+        }
+    }
 
 }
-
-
