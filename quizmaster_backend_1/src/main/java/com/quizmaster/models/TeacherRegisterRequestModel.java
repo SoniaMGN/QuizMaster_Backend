@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @Builder
-public class RegisterRequestModel {
+public class TeacherRegisterRequestModel {
     @NotEmpty(message = "Email cannot be empty")
     @Email(message = "Invalid email format")
     private String email;
@@ -19,7 +19,6 @@ public class RegisterRequestModel {
     @NotEmpty(message = "lastname cannot be empty")
     private String lastName;
 
-    @NotEmpty(message = "password cannot be empty")
-    @Size(min = 6,message = "password must contain at least 6 characters long")
-    private String password;
+    @NotEmpty(message = "school cannot be empty")
+    private String school;
 }

@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 @Builder
 @Entity(name = "users")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -39,4 +39,7 @@ public class User {
     private String school;
 
     private String status;
+
+    @Column(name = "is_superuser", nullable = false)
+    private boolean isSuperuser = false; // Add this flag to identify superusers
 }

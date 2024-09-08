@@ -82,7 +82,7 @@ public class QuizController {
                     .questions(quiz.getQuestions())
                     .message("Successfully retrieved quiz")
                     .build();
-           return ResponseEntity.ok(response);
+            return ResponseEntity.ok(response);
         }
 
     }
@@ -117,7 +117,3 @@ public class QuizController {
 
 
 }
-
-
-
-

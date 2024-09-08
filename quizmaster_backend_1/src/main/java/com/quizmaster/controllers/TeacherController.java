@@ -32,7 +32,7 @@ public class TeacherController {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(registerResponseModel);
         } else {
-            return teacherService.registerUser(registerRequestModel);
+            return teacherService.registerTeacher(registerRequestModel);
         }
     }
 }

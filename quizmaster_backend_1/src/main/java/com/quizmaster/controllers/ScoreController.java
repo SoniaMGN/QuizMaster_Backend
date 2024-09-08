@@ -27,7 +27,7 @@ public class ScoreController {
     @PostMapping("saveScore")
     ResponseEntity<?> saveScore(@RequestBody @Valid ScoreRequestModel scoreRequestModel)
     {
-         scoreService.saveScore(scoreRequestModel);
+        scoreService.saveScore(scoreRequestModel);
         try {
             scoreService.saveScore(scoreRequestModel);
             return ResponseEntity.ok("Score saved successfully");

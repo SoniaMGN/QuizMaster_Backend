@@ -2,30 +2,28 @@ package com.quizmaster.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-
 import javax.persistence.*;
 import java.util.List;
 
+
 @Data
-@Entity(name = "teachers")
-@DiscriminatorValue("teacher")
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class Teacher extends User {
 
     private String teacherID;
+
     private String school;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
-    private List<Student> students;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "teachers")
     private List<Course> courses;
 
+    @OneToMany(mappedBy = "teacher")
+    private List<Student> students;
+
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", unique = true) // Ensure this matches your schema
     private User user;
 }
