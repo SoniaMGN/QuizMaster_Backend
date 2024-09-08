@@ -84,4 +84,13 @@ public class MyUtils {
         EmailUtils.sendVerificationCode(email,verificationCode);
     }
 
+    public static String generateCourseCode(String courseName) {
+        String initials = courseName.length() >= 3 ? courseName.substring(0, 3).toUpperCase() : courseName.toUpperCase();
+
+        Random random = new Random();
+        int randomNumber = 200 + random.nextInt(299);  // Generate a number between 1000 and 9999
+
+        return initials + randomNumber;
+    }
+
 }

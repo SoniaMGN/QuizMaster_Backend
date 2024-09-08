@@ -11,11 +11,12 @@ import java.util.Optional;
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
     // Custom JPQL query to find all courses by a teacher's ID
-    @Query("SELECT c FROM course c WHERE c.teacher.key = :teacherId")
+    @Query("SELECT c FROM Course c JOIN c.teachers t WHERE t.key = :teacherId")
     List<Course> findCoursesByTeacherId(@Param("teacherId") String teacherId);
 
     // Custom query to find a course by courseCode
     Optional<Course> findByCourseCode(Long courseCode);
 
 
+    Optional<Course> findByCourseName(String courseName);
 }

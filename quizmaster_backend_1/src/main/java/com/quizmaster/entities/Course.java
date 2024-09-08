@@ -26,7 +26,7 @@ public class Course {
 
     private String description;
 
-    private Integer creditHours;
+    private Integer capacity;
 
     private String semester;
 
@@ -37,9 +37,9 @@ public class Course {
             joinColumns = @JoinColumn(name = "course_id"),
             inverseJoinColumns = @JoinColumn(name = "teacher_id")
     )
-    private List<Teacher> teachers; // A course can have multiple teachers
+    private List<Teacher> teachers;
 
-    // Many-to-Many relationship with Students
+
     @JsonIgnore
     @ManyToMany
     @JoinTable(
