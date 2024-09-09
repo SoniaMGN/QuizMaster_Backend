@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 public class UpdateCourseRequestModel {
 
     @NotEmpty(message = "previous course code cannot be empty.")
-    private Long oldCourseCode;
+    private String oldCourseCode;
 
     private String newCourseName;
 

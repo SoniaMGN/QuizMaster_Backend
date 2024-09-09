@@ -49,7 +49,7 @@ public class CourseController {
 
     // Delete a course by ID
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteCourse(@PathVariable Long id) {
+    public ResponseEntity<String> deleteCourse(@PathVariable String id) {
         return courseService.deleteCourse(id);
     }
 

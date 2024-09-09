@@ -3,6 +3,7 @@ package com.quizmaster.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 
@@ -10,11 +11,23 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Teacher extends User {
+public class Teacher {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long key;
 
     private String teacherID;
 
-    private String school;
+    private String gradeLevel;
+
+    private String homeroomClass;
+
+    private int yearsOfExperience;
+
+    private String classroomNumber;
+
+    private String contactNumber;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "teachers")

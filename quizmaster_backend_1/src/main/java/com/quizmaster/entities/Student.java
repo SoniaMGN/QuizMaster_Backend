@@ -11,7 +11,11 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Student extends User { // Inherits User fields
+public class Student  { // Inherits User fields
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long key;
 
     @Column(nullable = false)
     private String school;

@@ -13,9 +13,19 @@ public class RegisterTeacherRequestModel {
     @Email(message = "Invalid email format")
     private String email;
 
+    @NotEmpty(message = "gradelevel cannot be empty")
+    private String gradeLevel;
 
-    @NotEmpty(message = "school cannot be empty")
-    private String school;
+    @NotEmpty(message = "homeroomClass cannot be empty")
+    private String homeroomClass;
+
+    @NotEmpty(message = "yearsOfExperience cannot be empty")
+    private int yearsOfExperience;
+
+    @NotEmpty(message = "classroomNumber cannot be empty")
+    private String classroomNumber;
+
+    private String contactNumber;
 
     @NotEmpty(message = "password cannot be empty")
     @Size(min = 6,message = "password must contain at least 6 characters long")

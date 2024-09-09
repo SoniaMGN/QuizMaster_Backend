@@ -69,7 +69,7 @@ public class CourseService {
         return courseRepository.findById(id);
     }
 
-    public Optional<Course> getCourseByCode(Long courseCode) {
+    public Optional<Course> getCourseByCode(String courseCode) {
         return courseRepository.findByCourseCode(courseCode);
     }
 
@@ -114,7 +114,7 @@ public class CourseService {
 
 
 
-    public ResponseEntity<String> deleteCourse(Long courseID) {
+    public ResponseEntity<String> deleteCourse(String courseCode) {
 
         User currentUser = usersService.currentUser();
 
@@ -123,13 +123,13 @@ public class CourseService {
         }
 
         if (currentUser.isSuperuser() || "teacher".equals(currentUser.getRole())) {
-            Optional<Course> existingCourse = courseRepository.findByCourseCode(courseID);
+            Optional<Course> existingCourse = courseRepository.findByCourseCode(courseCode);
 
             if (existingCourse.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found.");
             }
 
-            courseRepository.deleteById(courseID);
+            courseRepository.deleteByCourseCode(courseCode);
             return ResponseEntity.status(HttpStatus.OK).body("Course deleted successfully.");
         }
 
@@ -146,8 +146,8 @@ public class CourseService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
         }
 
-        // Find the course by courseId
-        Optional<Course> courseOpt = courseRepository.findById(requestModel.getCourseId());
+        // Find the course by courseCode
+        Optional<Course> courseOpt = courseRepository.findByCourseCode(requestModel.getCourseCode());
         if (courseOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found.");
         }
@@ -156,7 +156,7 @@ public class CourseService {
 
         // If the current user is a superuser, they can assign any teacher to the course
         if (currentUser.isSuperuser()) {
-            Optional<Teacher> teacherOpt = teacherRepository.findById(requestModel.getTeacherId());
+            Optional<Teacher> teacherOpt = teacherRepository.findByTeacherID(String.valueOf(Long.parseLong(requestModel.getTeacherId())));
             if (teacherOpt.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Teacher not found.");
             }
@@ -166,16 +166,20 @@ public class CourseService {
             course.getTeachers().add(teacher);
             courseRepository.save(course);
 
-            return ResponseEntity.status(HttpStatus.OK).body("Teacher assigned to the course successfully.");
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Teacher " + teacher.getUser().getFirstName() + " " + teacher.getUser().getFirstName() + " assigned to the course successfully.");
         }
 
         // If the current user is a teacher, they can only assign themselves
         if ("teacher".equals(currentUser.getRole())) {
-            if (!currentUser.getKey().equals(requestModel.getTeacherId())) {
+            Long currentUserKey = currentUser.getKey();
+            Long requestTeacherId = Long.parseLong(requestModel.getTeacherId()); // Convert TeacherID to Long
+
+            if (!currentUserKey.equals(requestTeacherId)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only assign the course to yourself.");
             }
 
-            Optional<Teacher> teacherOpt = teacherRepository.findById(currentUser.getKey());
+            Optional<Teacher> teacherOpt = teacherRepository.findById(currentUserKey);
             if (teacherOpt.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Current teacher not found.");
             }
@@ -191,6 +195,7 @@ public class CourseService {
         // If the user is not authorized to assign a course, return forbidden
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to assign this course.");
     }
+
 
 
 
