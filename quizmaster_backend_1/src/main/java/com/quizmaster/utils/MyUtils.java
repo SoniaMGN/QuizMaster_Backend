@@ -14,7 +14,7 @@ public class MyUtils {
 
     private static final ObjectMapper objectMapper=new ObjectMapper();
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private static final int ID_LENGTH = 8; // Adjust length as needed
+    private static final int ID_LENGTH = 3; // Adjust length as needed
 
     private static final int PASSWORD_LENGTH = 14;
     private static final Random RANDOM = new SecureRandom();
@@ -43,7 +43,7 @@ public class MyUtils {
     }
 
     public static String generateTeacherID() {
-        StringBuilder sb = new StringBuilder("TE");
+        StringBuilder sb = new StringBuilder("TCHR-");
         for (int i = 0; i < ID_LENGTH; i++) {
             sb.append(CHARACTERS.charAt(RANDOM.nextInt(CHARACTERS.length())));
         }

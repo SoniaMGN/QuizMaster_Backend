@@ -6,9 +6,9 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class AssignCourseRequestModel {
-        @NotNull(message = "Course ID cannot be null")
-        private Long courseId;
+        @NotNull(message = "Course code cannot be null")
+        private String courseCode;
 
         @NotNull(message = "Teacher ID cannot be null")
-        private Long teacherId;
+        private String teacherId;
 }

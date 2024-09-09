@@ -71,10 +71,12 @@ public class StudentService {
                         .password(passwordEncoder.encode(password))
                         .build();
 
-                usersRepository.saveAndFlush(newUser);
+                // Save the new user to the database
+                usersRepository.saveAndFlush(newUser);  // Save the user before creating a Student
 
                 // Create a new student
                 Student newStudent = new Student();
+                newStudent.setUser(newUser);  // Link the user to the student
                 newStudent.setStudentID(MyUtils.generateStudentID());
                 newStudent.setGrade(registerRequestModel.getGrade());
                 newStudent.setDateOfBirth(registerRequestModel.getDateOfBirth());
@@ -91,18 +93,18 @@ public class StudentService {
                     Optional<Teacher> teacherOpt = teacherRepository.findByUserEmail(currentUser.getEmail());
 
                     if (teacherOpt.isPresent()) {
-                        assignedTeacher = teacherOpt.get(); // Assign the current user (if teacher) as the student's teacher
+                        assignedTeacher = teacherOpt.get();  // Assign the current user (if teacher) as the student's teacher
                     }
                 }
 
                 // If no teacher found (current user is not a teacher or no teacher exists), set the teacher as "Not assigned"
                 if (assignedTeacher == null) {
-                    newStudent.setTeacher(null); // Mark teacher as "Not assigned"
+                    newStudent.setTeacher(null);  // Mark teacher as "Not assigned"
                 } else {
-                    newStudent.setTeacher(assignedTeacher); // Assign the teacher to the student
+                    newStudent.setTeacher(assignedTeacher);  // Assign the teacher to the student
                 }
 
-                // Save the student
+                // Save the student to the database
                 studentRepository.save(newStudent);
 
                 // Send the welcome email
@@ -110,7 +112,7 @@ public class StudentService {
 
                 // Return success response
                 RegisterResponseModel response = RegisterResponseModel.builder()
-                        .userId(currentUser.getKey())
+                        .userId(newUser.getKey())  // Use newUser's ID
                         .message("Student Registration Successful")
                         .build();
 

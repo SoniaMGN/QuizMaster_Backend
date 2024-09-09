@@ -8,7 +8,6 @@ import java.util.List;
 @Data
 @Builder
 @Entity(name = "users")
-@Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {

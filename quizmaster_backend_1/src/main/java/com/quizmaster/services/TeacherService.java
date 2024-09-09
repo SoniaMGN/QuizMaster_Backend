@@ -10,6 +10,7 @@ import com.quizmaster.utils.MyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -25,6 +26,9 @@ public class TeacherService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public ResponseEntity<RegisterResponseModel> registerTeacher(RegisterTeacherRequestModel registerRequestModel) {
         // Validate the input request
@@ -55,34 +59,36 @@ public class TeacherService {
         if (existingTeacher.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(
                     RegisterResponseModel.builder()
-                            .userId(user.getKey())
+                            .userId(user.getKey())  // Assuming getKey() gives the user ID, adjust if necessary
                             .message("User is already registered as a teacher")
                             .build()
             );
-        }else {
+        } else {
             user.setStatus("active");
-            user.setSchool(registerRequestModel.getSchool());
-            // Register the user as a teacher
+            user.setPassword(passwordEncoder.encode(registerRequestModel.getPassword()));
+
+            usersRepository.save(user);
+
             Teacher newTeacher = new Teacher();
             newTeacher.setUser(user);
             newTeacher.setTeacherID(MyUtils.generateTeacherID());
+            newTeacher.setGradeLevel(registerRequestModel.getGradeLevel());
+            newTeacher.setYearsOfExperience(registerRequestModel.getYearsOfExperience());
+            newTeacher.setClassroomNumber(registerRequestModel.getClassroomNumber());
+            newTeacher.setHomeroomClass(registerRequestModel.getHomeroomClass());
+            newTeacher.setContactNumber(registerRequestModel.getContactNumber());
 
-            teacherRepository.save(newTeacher);  // Save Teacher to repository
+            teacherRepository.save(newTeacher);
 
-            // Send welcome email to the teacher
             sendWelcomeEmail(user, newTeacher);
 
-            // Return success response
             RegisterResponseModel response = RegisterResponseModel.builder()
-                    .userId(user.getKey())  // Changed to `getId()` assuming `user.getKey()` is incorrect
+                    .userId(user.getKey())
                     .message("Teacher Registration Successful")
                     .build();
 
             return ResponseEntity.ok(response);
         }
-
-
-
     }
 
     private void sendWelcomeEmail(User user, Teacher newTeacher) {
