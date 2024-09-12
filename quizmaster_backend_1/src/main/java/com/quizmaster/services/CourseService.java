@@ -79,22 +79,27 @@ public class CourseService {
 
 
     public ResponseEntity<String> updateCourse(UpdateCourseRequestModel requestModel) {
+        // Get the current user
         User currentUser = usersService.currentUser();
 
+        // Check if the user is authenticated
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
         }
 
-        Optional<Course> existingCourse = courseRepository.findByCourseCode(requestModel.getOldCourseCode());
+        // Find the existing course by the old course code
+        Optional<Course> existingCourseOpt = courseRepository.findByCourseCode(requestModel.getOldCourseCode());
 
+        // Check if the user has permission to update the course
         if (currentUser.isSuperuser() || "teacher".equals(currentUser.getRole())) {
 
-            if (existingCourse.isEmpty()) {
+            if (existingCourseOpt.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course does not exist.");
             }
 
-            Course updatedCourse = existingCourse.get();
+            Course updatedCourse = existingCourseOpt.get();
 
+            // Update the course details
             if (!Objects.equals(updatedCourse.getCourseName(), requestModel.getNewCourseName())) {
                 updatedCourse.setCourseCode(MyUtils.generateCourseCode(requestModel.getNewCourseName()));
                 updatedCourse.setCourseName(requestModel.getNewCourseName());
@@ -104,6 +109,7 @@ public class CourseService {
             updatedCourse.setCapacity(requestModel.getNewCapacity());
             updatedCourse.setSemester(requestModel.getSemester());
 
+            // Save the updated course
             courseRepository.save(updatedCourse);
 
             return ResponseEntity.status(HttpStatus.OK).body("Course updated successfully.");
@@ -111,6 +117,7 @@ public class CourseService {
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to update the course.");
     }
+
 
 
 
@@ -156,7 +163,8 @@ public class CourseService {
 
         // If the current user is a superuser, they can assign any teacher to the course
         if (currentUser.isSuperuser()) {
-            Optional<Teacher> teacherOpt = teacherRepository.findByTeacherID(String.valueOf(Long.parseLong(requestModel.getTeacherId())));
+            String teacherId = requestModel.getTeacherId();
+            Optional<Teacher> teacherOpt = teacherRepository.findByTeacherID(teacherId);
             if (teacherOpt.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Teacher not found.");
             }
@@ -167,19 +175,19 @@ public class CourseService {
             courseRepository.save(course);
 
             return ResponseEntity.status(HttpStatus.OK)
-                    .body("Teacher " + teacher.getUser().getFirstName() + " " + teacher.getUser().getFirstName() + " assigned to the course successfully.");
+                    .body("Teacher " + teacher.getUser().getFirstName() + " " + teacher.getUser().getLastName() + " assigned to the course successfully.");
         }
 
         // If the current user is a teacher, they can only assign themselves
         if ("teacher".equals(currentUser.getRole())) {
-            Long currentUserKey = currentUser.getKey();
-            Long requestTeacherId = Long.parseLong(requestModel.getTeacherId()); // Convert TeacherID to Long
+            String currentUserId = String.valueOf(currentUser.getKey());
+            String requestTeacherId = requestModel.getTeacherId();
 
-            if (!currentUserKey.equals(requestTeacherId)) {
+            if (!currentUserId.equals(requestTeacherId)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only assign the course to yourself.");
             }
 
-            Optional<Teacher> teacherOpt = teacherRepository.findById(currentUserKey);
+            Optional<Teacher> teacherOpt = teacherRepository.findByTeacherID(currentUserId);
             if (teacherOpt.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Current teacher not found.");
             }
@@ -195,8 +203,6 @@ public class CourseService {
         // If the user is not authorized to assign a course, return forbidden
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission to assign this course.");
     }
-
-
 
 
     public ResponseEntity<String> enrollStudent(EnrollStudentRequestModel requestModel) {

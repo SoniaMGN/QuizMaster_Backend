@@ -33,9 +33,6 @@ public class RegisterStudentRequestModel {
     private String address;
 
     @NotEmpty(message = "name cannot be empty")
-    private String registrationDate;
-
-    @NotEmpty(message = "name cannot be empty")
     private String parentName;
 
     @NotEmpty(message = "name cannot be empty")

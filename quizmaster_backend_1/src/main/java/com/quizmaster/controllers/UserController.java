@@ -55,7 +55,7 @@ public class UserController {
     @Autowired
     private AuthorizationTokensRepository authorizationTokensRepository;
 
-    @PostMapping("/register")
+    @PostMapping("/register-admin")
     public ResponseEntity<RegisterResponseModel> register(@RequestBody @Valid RegisterRequestModel registerRequestModel, BindingResult result)
     {
         if(result.hasErrors())
@@ -78,51 +78,6 @@ public class UserController {
             return usersService.registerUser(registerRequestModel);
     }
 
-    @PostMapping("/register-teacher")
-    public ResponseEntity<RegisterResponseModel> registerTeacher(@RequestBody @Valid TeacherRegisterRequestModel registerRequestModel, BindingResult result)
-    {
-        if(result.hasErrors())
-        {
-
-            String msg= MyUtils.createErrorMessage(result);
-
-
-
-            RegisterResponseModel registerResponseModel=RegisterResponseModel.builder()
-                    .userId(null)
-                    .message(msg)
-
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(registerResponseModel);
-
-        }
-        else
-            return usersService.registerTeacher(registerRequestModel);
-    }
-
-    @PostMapping("/register-student")
-    public ResponseEntity<RegisterResponseModel> registerStudent(@RequestBody @Valid RegisterStudentRequestModel registerRequestModel, BindingResult result)
-    {
-        if(result.hasErrors())
-        {
-
-            String msg= MyUtils.createErrorMessage(result);
-
-
-
-            RegisterResponseModel registerResponseModel=RegisterResponseModel.builder()
-                    .userId(null)
-                    .message(msg)
-
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(registerResponseModel);
-
-        }
-        else
-            return usersService.registerStudent(registerRequestModel);
-    }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseModel> login(@RequestBody @Valid LoginRequestModel loginRequestModel)
@@ -223,19 +178,6 @@ public class UserController {
         }
 
     }
-    @GetMapping ("/test-email")
-    public String sendTestEmail() {
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo("soniamangane@gmail.com");
-            message.setSubject("Test Email");
-            message.setText("This is a test email from Spring Boot application.");
-            message.setFrom(fromEmail);
-            emailSender.send(message);
-            return "Email sent successfully!";
-        } catch (Exception e) {
-            return "Failed to send email: " + e.getMessage();
-        }
-    }
+
 
 }
