@@ -10,8 +10,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
-@RequestMapping("/api/v1/teacher")
+@RequestMapping("/api/v1/user/teacher")
 public class TeacherController {
 
     @Autowired
@@ -20,7 +22,7 @@ public class TeacherController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @PostMapping("/register")
+    @PostMapping("/register-teacher")
     public ResponseEntity<RegisterResponseModel> register(@RequestBody RegisterTeacherRequestModel registerRequestModel, BindingResult result) {
         if (result.hasErrors()) {
             String msg = MyUtils.createErrorMessage(result);
@@ -34,5 +36,28 @@ public class TeacherController {
         } else {
             return teacherService.registerTeacher(registerRequestModel);
         }
+    }
+
+    @PostMapping("/admin-register-teacher")
+    public ResponseEntity<RegisterResponseModel> registerTeacher(@RequestBody @Valid TeacherRegisterRequestModel registerRequestModel, BindingResult result)
+    {
+        if(result.hasErrors())
+        {
+
+            String msg= MyUtils.createErrorMessage(result);
+
+
+
+            RegisterResponseModel registerResponseModel=RegisterResponseModel.builder()
+                    .userId(null)
+                    .message(msg)
+
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(registerResponseModel);
+
+        }
+        else
+            return teacherService.registerTeacherByAdmin(registerRequestModel);
     }
 }

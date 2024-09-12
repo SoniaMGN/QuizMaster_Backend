@@ -12,7 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/student")
+@RequestMapping("/api/v1/user/student")
 public class StudentController {
 
     @Autowired
@@ -21,7 +21,7 @@ public class StudentController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @PostMapping("/register")
+    @PostMapping("/register-student")
     public ResponseEntity<RegisterResponseModel> register(@RequestBody RegisterStudentRequestModel registerRequestModel, BindingResult result) {
         if (result.hasErrors()) {
             String msg = MyUtils.createErrorMessage(result);

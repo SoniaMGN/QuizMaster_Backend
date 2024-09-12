@@ -4,6 +4,7 @@ import com.quizmaster.entities.Teacher;
 import com.quizmaster.entities.User;
 import com.quizmaster.models.RegisterResponseModel;
 import com.quizmaster.models.RegisterTeacherRequestModel;
+import com.quizmaster.models.TeacherRegisterRequestModel;
 import com.quizmaster.repositories.TeacherRepository;
 import com.quizmaster.repositories.UsersRepository;
 import com.quizmaster.utils.MyUtils;
@@ -28,8 +29,63 @@ public class TeacherService {
     private EmailService emailService;
 
     @Autowired
+    private UsersService usersService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
+
+    public ResponseEntity<RegisterResponseModel> registerTeacherByAdmin(TeacherRegisterRequestModel registerRequestModel) {
+
+        if (usersService.currentUser() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        } else {
+            if (registerRequestModel == null || registerRequestModel.getEmail() == null) {
+                return ResponseEntity.badRequest().body(
+                        RegisterResponseModel.builder()
+                                .userId(null)
+                                .message("Invalid registration request")
+                                .build()
+                );
+            }
+
+            // Check if the user is already registered
+            Optional<User> existingUser = usersRepository.findByEmail(registerRequestModel.getEmail());
+            if (existingUser.isPresent()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        RegisterResponseModel.builder()
+                                .userId(null)
+                                .message("User already registered.")
+                                .build()
+                );
+            } else {
+                if (usersService.currentUser().isSuperuser()) {
+                    User newUser = User.builder()
+                            .email(registerRequestModel.getEmail())
+                            .firstName(registerRequestModel.getFirstName())
+                            .lastName(registerRequestModel.getLastName())
+                            .role("teacher")
+                            .status("inactive")
+                            .school(registerRequestModel.getSchool())
+                            .build();
+
+                    usersRepository.save(newUser);
+                } else {
+                    return ResponseEntity.badRequest().body(
+                            RegisterResponseModel.builder()
+                                    .userId(null)
+                                    .message("Current user is not authorized to register a teacher")
+                                    .build()
+                    );
+                }
+            }
+
+
+        }
+
+
+        return null;
+    }
     public ResponseEntity<RegisterResponseModel> registerTeacher(RegisterTeacherRequestModel registerRequestModel) {
         // Validate the input request
         if (registerRequestModel == null || registerRequestModel.getEmail() == null) {

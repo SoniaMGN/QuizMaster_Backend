@@ -40,5 +40,13 @@ public class User {
     private String status;
 
     @Column(name = "is_superuser", nullable = false)
-    private boolean isSuperuser = false; // Add this flag to identify superusers
+    private boolean isSuperuser = false;
+
+
+    public User(String email, String name, String lastname, String password) {
+        setEmail(email);
+        setFirstName(name);
+        setLastName(lastname);
+        setPassword(password);
+    }
 }

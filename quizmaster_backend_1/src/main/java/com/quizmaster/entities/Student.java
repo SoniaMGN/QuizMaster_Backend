@@ -11,14 +11,11 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Student  { // Inherits User fields
+public class Student  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long key;
-
-    @Column(nullable = false)
-    private String school;
 
     private String grade;
 
@@ -27,31 +24,32 @@ public class Student  { // Inherits User fields
     private String address;
 
     @Column(unique = true)
-    private String studentID; // Unique student identifier
+    private String studentID;
 
     @OneToOne
-    @JoinColumn(name = "user_id", unique = true) // Ensure this matches your schema
+    @JoinColumn(name = "user_id", unique = true)
     private User user;
-    // Many-to-Many relationship with Course
+
     @ManyToMany
     @JoinTable(
             name = "student_courses",
             joinColumns = @JoinColumn(name = "student_id"),
             inverseJoinColumns = @JoinColumn(name = "course_id")
     )
-    private List<Course> courses; // Courses the student is enrolled in
+    private List<Course> courses;
 
     @Column(nullable = false)
-    private String registrationDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date registrationDate;
 
     private String parentName;
 
     private String parentContact;
 
-    // Many-to-One relationship with Teacher
+
     @ManyToOne
     @JoinColumn(name = "teacher_id")
-    private Teacher teacher; // The student's assigned teacher (nullable for 'Not assigned')
+    private Teacher teacher;
 
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -63,6 +61,7 @@ public class Student  { // Inherits User fields
     @PrePersist
     protected void onCreate() {
         this.dateOfCreation = new Date();
+        this.registrationDate = new Date();
     }
 
     @PreUpdate
